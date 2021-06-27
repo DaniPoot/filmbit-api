@@ -1,15 +1,33 @@
 const { Router } = require("express");
 const router = Router();
 const {
-  getFavorites,
+  getAllFavorites,
   addNewFavorite,
   deleteFavorite,
-  deleteAllFavorites,
+  getFavorite,
 } = require("../controllers/favorites.controller.js");
 
-router.get("/", getFavorites);
-router.post("/", addNewFavorite);
-router.delete("/:id", deleteFavorite);
-router.delete("/all", deleteAllFavorites);
+router.get("/:id",verifyToken, getFavorite);
+router.get("/:userId/:movieId", verifyToken, getAllFavorites);
+router.post("/", verifyToken, addNewFavorite);
+router.delete("/:id", verifyToken, deleteFavorite);
 
 module.exports = router;
+
+// Authorization: Bearer <token>
+function verifyToken(req, res, next){
+  const bearerHeader =  req.headers['authorization'];
+
+  if(typeof bearerHeader !== 'undefined'){
+     const bearerToken = bearerHeader.split(" ")[1];
+     jwt.verify(bearerToken, 'privatekey', (error, authData) => {
+         if(error){
+             res.sendStatus(403);
+         }else{
+             next();
+         }
+     });
+ }else{
+     res.sendStatus(403);
+ }
+}
