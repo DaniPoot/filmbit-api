@@ -7,7 +7,7 @@ const Favorite = require("../models/favorite.js");
  * Devolver listado de ids de las peliculas.
  */
 const getAllFavorites = (req, res) => {
-  const { user_id } = req.body;
+  const user_id = req.params.id;
   try {
     const favorite = Favorite.findAll({ where: { user_id } });
     return res.status(200).json(favorite);
@@ -23,7 +23,7 @@ const getAllFavorites = (req, res) => {
  * Devolver id de la pelicula, si no existe devolver json vacio.
  */
 const getFavorite = (req, res) => {
-  const { user_id, movie_id } = req.body;
+  const { userId: user_id, movieId: movie_id } = req.params;
   try {
     const favorite = Favorite.findOne({ where: { user_id, movie_id } });
     return res.status(200).json(favorite);
@@ -56,7 +56,7 @@ const addNewFavorite = (req, res) => {
  * res = Status 400 si un parametro no llega, Status 200 si se elimina el registro correctamente.
  */
 const deleteFavorite = (req, res) => {
-  const { user_id, movie_id } = req.body;
+  const { userId: user_id, movieId: movie_id } = req.params;
 
   try {
     const favorite = Favorite.destroy({
