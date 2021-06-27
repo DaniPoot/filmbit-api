@@ -12,6 +12,10 @@ const Reviews = db.define("reviews", {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  id_movie: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+  },
 });
 
 module.exports = Reviews;
