@@ -23,20 +23,21 @@ const getAllReviewsByMovieId = async (req, res) => {
 };
 
 /*
- * req.body = {userId, movieId, body}
+ * req.body = {user_id, movie_id, body}
  * funcionalidad: validar que no hayan paramatros undefined y crear registro.
  * res = Status 200 si se creó correctamente. Status 400 si un parametro no llega.
  */
 const addReview = async (req, res) => {
-  const { user_id, movie_id, body } = req.body;
+  const { id_user, id_movie, body } = req.body;
   try {
     const favorite = await Reviews.create({
-      user_id,
-      movie_id,
+      id_user,
+      id_movie,
       body,
     });
     return res.status(200).json(favorite);
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ error: err });
   }
 };

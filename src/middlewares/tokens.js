@@ -1,3 +1,6 @@
+
+const jwt = require("jsonwebtoken");
+
 // Authorization: Bearer <token>
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers["authorization"];

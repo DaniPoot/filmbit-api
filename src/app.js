@@ -13,6 +13,6 @@ app.use(express.json());
 //Routes
 app.use("/login", userRoutes);
 app.use("/favorites", favoritesRoutes);
-app.use("reviews", reviewsRoutes);
+app.use("/reviews", reviewsRoutes);
 
 module.exports = app;
