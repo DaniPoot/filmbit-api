@@ -6,10 +6,13 @@ const Favorite = require("../models/favorite.js");
  * res = Status 200 junto con la info de abajo.
  * Devolver listado de ids de las peliculas.
  */
-const getAllFavorites = (req, res) => {
-  const user_id = req.params.id;
+const getAllFavorites = async (req, res) => {
+  const id_user = req.params.userId;
   try {
-    const favorite = Favorite.findAll({ where: { user_id } });
+    const favorite = await Favorite.findAll({
+      where: { id_user },
+      attributes: ["id_user", "id_movie"],
+    });
     return res.status(200).json(favorite);
   } catch (err) {
     return res.status(500).json({ error: err });
@@ -22,10 +25,13 @@ const getAllFavorites = (req, res) => {
  * res = Status 200 junto con la info de abajo.
  * Devolver id de la pelicula, si no existe devolver json vacio.
  */
-const getFavorite = (req, res) => {
-  const { userId: user_id, movieId: movie_id } = req.params;
+const getFavorite = async (req, res) => {
+  const { userId: id_user, movieId: id_movie } = req.params;
   try {
-    const favorite = Favorite.findOne({ where: { user_id, movie_id } });
+    const favorite = await Favorite.findOne({
+      where: { id_user, id_movie },
+      attributes: ["id_user", "id_movie"],
+    });
     return res.status(200).json(favorite);
   } catch (err) {
     return res.status(500).json({ error: err });
@@ -39,11 +45,11 @@ const getFavorite = (req, res) => {
  * res = Status 200 si se creó correctamente. Status 400 si un parametro
  * no llega o si ya existe un registro.
  */
-const addNewFavorite = (req, res) => {
-  const { user_id, movie_id } = req.body;
+const addNewFavorite = async (req, res) => {
+  const { id_user, id_movie } = req.body;
 
   try {
-    const favorite = Favorite.create({ user_id, movie_id });
+    const favorite = await Favorite.create({ id_user, id_movie });
     return res.status(200).json(favorite);
   } catch (err) {
     return res.status(500).json({ error: err });
@@ -55,14 +61,14 @@ const addNewFavorite = (req, res) => {
  * funcionalidad: eliminar el registro según el id de la pelicula.
  * res = Status 400 si un parametro no llega, Status 200 si se elimina el registro correctamente.
  */
-const deleteFavorite = (req, res) => {
-  const { userId: user_id, movieId: movie_id } = req.params;
+const deleteFavorite = async (req, res) => {
+  const { userId: id_user, movieId: id_movie } = req.params;
 
   try {
-    const favorite = Favorite.destroy({
+    const favorite = await Favorite.destroy({
       where: {
-        user_id,
-        movie_id,
+        id_movie,
+        id_user,
       },
     });
     return res.status(200).json(favorite);
