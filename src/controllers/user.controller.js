@@ -20,7 +20,7 @@ const getUser = async (req, res) => {
       .update(password)
       .digest("hex");
 
-    if (user.password === passwordEncrypted) {
+    if ( typeof user !== "undefined" && user.password === passwordEncrypted) {
       user.password = undefined;
       jwt.sign({ email }, "privatekey", (err, token) => {
         return res.status(202).json({
@@ -28,6 +28,8 @@ const getUser = async (req, res) => {
           user
         });
       });
+    }else{
+        return res.status(503).json(err);
     }
   } catch (err) {
     return res.status(500).json(err);
