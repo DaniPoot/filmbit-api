@@ -7,6 +7,7 @@ const userRoutes = require("./routes/user.routes.js");
 const reviewsRoutes = require("./routes/reviews.routes.js");
 
 app.use(cors());
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
 
 //Routes

@@ -1,4 +1,6 @@
 const { Router } = require("express");
+const jwt = require("jsonwebtoken");
+
 const router = Router();
 const {
   getUser,
@@ -24,7 +26,7 @@ function verifyToken(req, res, next){
          if(error){
              res.sendStatus(403);
          }else{
-             req.email = authData.email
+             req.body.email = authData.email
              next();
          }
      });

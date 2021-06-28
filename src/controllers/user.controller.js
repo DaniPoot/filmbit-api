@@ -17,14 +17,16 @@ const getUser = async (req, res) => {
   try {
     const user = await User.findOne({ where: { email } });
     const passwordEncrypted = shajs("sha256")
-      .update(req.body.password)
+      .update(password)
       .digest("hex");
 
     if (user.password === passwordEncrypted) {
-      delete user.password;
-      return res.status(202).json({
-        token: "Token bro",
-        user,
+      user.password = undefined;
+      jwt.sign({ email }, "privatekey", (err, token) => {
+        return res.status(202).json({
+          token,
+          user
+        });
       });
     }
   } catch (err) {
@@ -48,19 +50,22 @@ const getUser = async (req, res) => {
 const createUser = async (req, res) => {
   const { name, email, password } = req.body;
 
-  const passwordEncrypted = shajs("sha256").update(password).digest("hex");
-  try {
-    const user = await User.create({
+  console.log(req.body);
+  const passwordEncrypted = shajs("sha256")
+    .update(password)
+    .digest("hex");
+ 
+    try {
+    User.create({
       name,
       email,
       password: passwordEncrypted,
     });
-    delete user.password;
+
     return res.status(202).json({
-      token: "token baby",
-      message: "User was created",
-      user,
+      message: "User was created"
     });
+
   } catch (err) {
     let { errors } = err || {};
 
@@ -87,11 +92,14 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   const { name, email, password } = req.body;
 
-  const passwordEncrypted = shajs("sha256").update(password).digest("hex");
+  const passwordEncrypted = shajs("sha256")
+    .update(password)
+    .digest("hex");
+  
   try {
-    const user = await User.update({
+    const user = await User.findOne({ where: { email}})
+    user.update({
       name,
-      email,
       password: passwordEncrypted,
     });
     delete user.password;
@@ -112,6 +120,7 @@ const updateUser = async (req, res) => {
         return obj;
       });
     }
+    console.log(err);
     return res.status(500).json({ errors });
   }
 };
