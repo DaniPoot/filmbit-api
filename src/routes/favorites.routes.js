@@ -8,9 +8,9 @@ const {
 } = require("../controllers/favorites.controller.js");
 const { verifyToken } = require("../middlewares/tokens.js");
 
-router.get("/:id", verifyToken, getFavorite);
-router.get("/:userId/:movieId", verifyToken, getAllFavorites);
+router.get("/:userId/:movieId", verifyToken, getFavorite);
+router.get("/:userId", verifyToken, getAllFavorites);
 router.post("/", verifyToken, addNewFavorite);
-router.delete("/:id", verifyToken, deleteFavorite);
+router.delete("/:userId/:movieId", verifyToken, deleteFavorite);
 
 module.exports = router;
