@@ -8,13 +8,14 @@ const Reviews = require("../models/reviews.js");
  * Devolver listado de las reviews de las peliculas.
  */
 const getAllReviewsByMovieId = async (req, res) => {
-  const movie_id = req.params.movieId;
+  const id_movie = req.params.movieId;
 
   try {
     const allreviews = await Reviews.findAll({
       where: {
-        movie_id,
+        id_movie,
       },
+      attributes: ["id_user", "body", "id_movie"],
     });
     return res.status(200).json(allreviews);
   } catch (err) {
@@ -30,12 +31,12 @@ const getAllReviewsByMovieId = async (req, res) => {
 const addReview = async (req, res) => {
   const { id_user, id_movie, body } = req.body;
   try {
-    const favorite = await Reviews.create({
+    const review = await Reviews.create({
       id_user,
       id_movie,
       body,
     });
-    return res.status(200).json(favorite);
+    return res.status(200).json(review);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: err });
@@ -48,15 +49,22 @@ const addReview = async (req, res) => {
  * res = Status 200 si se editó correctamente. Status 400 si un parametro no llega.
  */
 const updateReview = async (req, res) => {
-  const movie_id = req.params.id;
-  const { user_id, body } = req.body;
+  const id = req.params.id;
+  const { body } = req.body;
   try {
-    const favorite = await Reviews.create({
-      user_id,
-      movie_id,
-      body,
+    const review = await Reviews.findOne({
+      where: {
+        id,
+      },
+      attributes: ["id", "id_user", "body", "id_movie"],
     });
-    return res.status(200).json(favorite);
+
+    await review
+      .update({
+        body,
+      })
+      .catch((e) => console.log(e));
+    return res.status(200).json(review);
   } catch (err) {
     return res.status(500).json({ error: err });
   }
