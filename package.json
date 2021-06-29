@@ -13,7 +13,10 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "html-pdf-node": "^1.0.7",
+    "json2csv": "^5.0.6",
     "jsonwebtoken": "^8.5.1",
+    "jspdf": "^2.3.1",
     "mysql2": "^2.2.5",
     "sequelize": "^6.6.2",
     "sha.js": "^2.4.11"
