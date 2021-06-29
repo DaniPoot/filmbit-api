@@ -16,20 +16,18 @@ const getUser = async (req, res) => {
 
   try {
     const user = await User.findOne({ where: { email } });
-    const passwordEncrypted = shajs("sha256")
-      .update(password)
-      .digest("hex");
+    const passwordEncrypted = shajs("sha256").update(password).digest("hex");
 
-    if ( typeof user !== "undefined" && user.password === passwordEncrypted) {
+    if (typeof user !== "undefined" && user.password === passwordEncrypted) {
       user.password = undefined;
       jwt.sign({ email }, "privatekey", (err, token) => {
         return res.status(202).json({
           token,
-          user
+          user,
         });
       });
-    }else{
-        return res.status(503).json(err);
+    } else {
+      return res.status(503).json(err);
     }
   } catch (err) {
     return res.status(500).json(err);
@@ -53,11 +51,9 @@ const createUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   console.log(req.body);
-  const passwordEncrypted = shajs("sha256")
-    .update(password)
-    .digest("hex");
- 
-    try {
+  const passwordEncrypted = shajs("sha256").update(password).digest("hex");
+
+  try {
     User.create({
       name,
       email,
@@ -65,9 +61,8 @@ const createUser = async (req, res) => {
     });
 
     return res.status(202).json({
-      message: "User was created"
+      message: "User was created",
     });
-
   } catch (err) {
     let { errors } = err || {};
 
@@ -94,12 +89,10 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   const { name, email, password } = req.body;
 
-  const passwordEncrypted = shajs("sha256")
-    .update(password)
-    .digest("hex");
-  
+  const passwordEncrypted = shajs("sha256").update(password).digest("hex");
+
   try {
-    const user = await User.findOne({ where: { email}})
+    const user = await User.findOne({ where: { email } });
     user.update({
       name,
       password: passwordEncrypted,
