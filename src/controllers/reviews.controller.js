@@ -1,5 +1,6 @@
 const Reviews = require("../models/reviews.js");
-
+const { Parser } = require("json2csv");
+const HTML = require("html-pdf-node");
 /*
  * URL = movieId
  * funcionalidad: obtener todos los registros donde el id de la pelicula sea igual a movieId.
@@ -87,9 +88,55 @@ const deleteReview = async (req, res) => {
   }
 };
 
+const getAllReviewsCSV = async (req, res) => {
+  const reviews = await Reviews.findAll({
+    attributes: ["id_user", "body", "id_movie"],
+    raw: true,
+  });
+
+  const parser = new Parser();
+  const csv = parser.parse(reviews);
+
+  res.header("Content-Type", "text/csv");
+  res.attachment("moviesreviews.csv");
+  return res.send(csv);
+};
+const getAllReviewsPDF = async (req, res) => {
+  const reviews = await Reviews.findAll({
+    attributes: ["id_user", "body", "id_movie"],
+    raw: true,
+  });
+  let html = `
+  <table>
+  <tr>
+    <th>USER ID</th>
+    <th>MOVIE ID</th>
+    <th>BODY</th>
+  </tr>`;
+  reviews.forEach((review) => {
+    const { id_movie, id_user, body } = review;
+    html += `
+    <tr>
+      <td>${id_user}</td>
+      <td>${id_movie}</td>
+      <td>${body}</td>
+    </tr>
+    `;
+  });
+  html += `</table>`;
+  let options = { format: "A4" };
+  let file = { content: html };
+  const doc = await HTML.generatePdf(file, options);
+
+  res.header("Content-Type", "application/pdf");
+  return res.send(doc);
+};
+
 module.exports = {
   getAllReviewsByMovieId,
   addReview,
   updateReview,
   deleteReview,
+  getAllReviewsCSV,
+  getAllReviewsPDF,
 };
